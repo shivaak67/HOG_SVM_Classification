@@ -27,9 +27,9 @@ TEST_DIR = os.path.join(RAW_DATA_DIR, "test")      # Test images for evaluation
 # ============================================================================
 
 HOG_CONFIG = {
-    "orientations": 12,         # Number of gradient orientation bins (more orientations = better direction capture)
-    "pixels_per_cell": (8, 8),  # Size of each cell in pixels (larger = more robust features)
-    "cells_per_block": (1, 1),  # Number of cells in each block (smaller = less normalization, more detail)
+    "orientations": 9,          # Number of gradient orientation bins (0-180 degrees)
+    "pixels_per_cell": (4, 4),  # Size of each cell in pixels (smaller = more features)
+    "cells_per_block": (2, 2),  # Number of cells in each block (normalization context)
     "visualize": False,         # Return HOG image visualization (set True for debugging)
     "block_norm": "L2-Hys",     # Block normalization method (L2-Hys works well)
     "transform_sqrt": True      # Apply square root transform to reduce illumination effects
@@ -40,7 +40,7 @@ HOG_CONFIG = {
 # ============================================================================
 
 SVM_CONFIG = {
-    "C": 1.0,                   # Regularization parameter (higher = less regularization)
+    "C": 10.0,                  # Regularization parameter (higher = less regularization)
     "kernel": "linear",            # Kernel type: 'linear' for linear SVM
     "gamma": "scale",           # Kernel coefficient: 'scale' uses 1/(n_features * X.var())
     "probability": True,       # Enable probability estimates for predictions
