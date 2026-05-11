@@ -33,7 +33,7 @@ HOG_CONFIG = {
 # SVM CLASSIFIER HYPERPARAMETERS
 SVM_CONFIG = {
     "C": 1.0,                   # Regularization parameter (higher = less regularization)
-    "kernel": "rbf",            # Kernel type: 'linear' for linear SVM
+    "kernel": "linear",            # Kernel type: 'linear' for linear SVM
     "gamma": "scale",           # Kernel coefficient: 'scale' uses 1/(n_features * X.var())
     "probability": True,       # Enable probability estimates for predictions
     "random_state": 42          # Random seed for reproducibility
