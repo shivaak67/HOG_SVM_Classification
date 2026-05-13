@@ -40,7 +40,7 @@ HOG_CONFIG = {
 # ============================================================================
 
 SVM_CONFIG = {
-    "C": 10.0,                  # Regularization parameter (higher = less regularization)
+    "C": 0.1,                   # Regularization parameter (lower = more regularization)
     "kernel": "linear",            # Kernel type: 'linear' for linear SVM
     "gamma": "scale",           # Kernel coefficient: 'scale' uses 1/(n_features * X.var())
     "probability": True,       # Enable probability estimates for predictions

@@ -139,6 +139,7 @@ data/processed/*
 !data/processed/.gitkeep
 models/*.pkl
 !models/.gitkeep
+models/ensemble/*.pkl
 outputs/*
 !outputs/.gitkeep
 
