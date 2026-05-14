@@ -1,190 +1,223 @@
-# Computer Vision Project
+# HOG SVM Cat vs Dog Classification
 
-A comprehensive computer vision project for image classification using HOG (Histogram of Oriented Gradients) features and SVM classifiers.
+A computer vision project for classifying cat and dog images using HOG (Histogram of Oriented Gradients) features and an SVM classifier. The project includes training/evaluation scripts, exploratory notebooks, and a full-stack web app for uploading an image and getting a prediction.
 
 ## Project Structure
 
-```
-current folder/
-│
-├── data/
-│   ├── raw/
-│   │   ├── train/
-│   │   │   ├── class_0/
-│   │   │   └── class_1/
-│   │   └── test/
-│   │       ├── class_0/
-│   │       └── class_1/
-│   └── processed/
-│
-├── notebooks/
-│   ├── 01_data_exploration.ipynb
-│   ├── 02_hog_visualization.ipynb
-│   └── 03_model_experiments.ipynb
-│
-├── src/
-│   ├── __init__.py
-│   ├── config.py
-│   ├── preprocess.py
-│   ├── features.py
-│   ├── dataset.py
-│   ├── train.py
-│   ├── evaluate.py
-│   └── predict.py
-│
-├── models/
-│   ├── svm_model.pkl
-│   └── label_encoder.pkl
-│
-├── outputs/
-│   ├── figures/
-│   ├── metrics/
-│   └── predictions/
-│
-├── requirements.txt
-├── README.md
-└── .gitignore
+```text
+HOG_SVM_Classification/
+|
+|-- data/
+|   |-- raw/
+|   |   |-- train/
+|   |   |   |-- class_0/
+|   |   |   `-- class_1/
+|   |   `-- test/
+|   |       |-- class_0/
+|   |       `-- class_1/
+|   `-- processed/
+|
+|-- notebooks/
+|   |-- 01_data_exploration.ipynb
+|   |-- 02_hog_visualization.ipynb
+|   `-- 03_model_experiments.ipynb
+|
+|-- src/
+|   |-- config.py
+|   |-- dataset.py
+|   |-- train.py
+|   |-- evaluate.py
+|   `-- ensemble.py
+|
+|-- backend/
+|   |-- app.py
+|   |-- model_utils.py
+|   |-- requirements.txt
+|   `-- models/
+|
+|-- frontend/
+|   |-- src/
+|   |-- package.json
+|   `-- vite.config.js
+|
+|-- models/
+|-- outputs/
+|-- requirements.txt
+|-- WEB_APP_SETUP.md
+`-- README.md
 ```
 
-## Features
+## Core ML Features
 
-- **Data Preprocessing**: Image loading, resizing, normalization, and augmentation
-- **Feature Extraction**: HOG features, color histograms, and LBP (Local Binary Patterns)
-- **Model Training**: SVM with hyperparameter tuning, cross-validation
-- **Evaluation**: Comprehensive metrics, confusion matrices, ROC curves
-- **Visualization**: Feature visualizations, learning curves, error analysis
-- **Prediction**: Single image and batch prediction capabilities
+- HOG feature extraction with configurable image size and HOG parameters
+- SVM model training with feature scaling
+- Evaluation with accuracy, precision, recall, F1 score, and confusion matrix
+- Ensemble/model experiment scripts
+- Notebooks for data exploration, HOG visualization, and model comparison
+
+## Web App
+
+The project includes a full-stack cat vs dog prediction website.
+
+- Frontend: React, Vite, Tailwind CSS
+- Backend: FastAPI
+- ML inference: OpenCV preprocessing, scikit-image HOG extraction, scikit-learn scaler and SVM model
+- Endpoint: `POST /predict`
+
+The website lets a user drag and drop or upload an image, preview it, click Predict, and see the predicted class with a confidence score when the model supports probabilities.
 
 ## Installation
 
-1. Clone the repository
-2. Install dependencies:
+Install the main ML project dependencies:
+
 ```bash
 pip install -r requirements.txt
 ```
 
-## Usage
+## Data Preparation
 
-### Data Preparation
+Place images in this format:
 
-Place your images in the following structure:
-```
+```text
 data/raw/train/
-├── class_0/
-│   ├── image1.jpg
-│   ├── image2.jpg
-│   └── ...
-└── class_1/
-    ├── image1.jpg
-    ├── image2.jpg
-    └── ...
+|-- class_0/
+|   |-- image1.jpg
+|   `-- image2.jpg
+`-- class_1/
+    |-- image1.jpg
+    `-- image2.jpg
 ```
 
-### Training
+The current web app label mapping assumes:
 
-Run the training pipeline:
 ```python
-from src.train import train_and_evaluate_pipeline
-
-# Train with grid search
-model, label_encoder, results = train_and_evaluate_pipeline(use_grid_search=True)
-
-# Train with simple SVM
-model, label_encoder, results = train_and_evaluate_pipeline(use_grid_search=False)
+0 -> cat
+1 -> dog
 ```
 
-### Prediction
+If your folders use the opposite order, update `CLASS_NAMES` in `backend/model_utils.py`.
 
-Make predictions on new images:
+## Training
+
+Run the training script from the project root:
+
+```bash
+python src/train.py
+```
+
+This trains the SVM model using the settings in `src/config.py` and saves model artifacts under `models/`.
+
+## Evaluation
+
+Run:
+
+```bash
+python src/evaluate.py
+```
+
+The evaluation pipeline loads the saved model and scaler, preprocesses test images, extracts HOG features, and reports classification metrics.
+
+## Web App Setup
+
+### Model Files
+
+The FastAPI backend expects:
+
+```text
+backend/models/svm_model.pkl
+backend/models/scaler.pkl
+```
+
+For local development, the backend also falls back to the existing project model files:
+
+```text
+models/hog_svm_model.pkl
+models/scaler.pkl
+```
+
+Large `.pkl` model files are ignored by Git.
+
+### Run Backend
+
+```bash
+cd backend
+python -m venv .venv
+.venv\Scripts\activate
+pip install -r requirements.txt
+python -m uvicorn app:app --reload
+```
+
+Backend URL:
+
+```text
+http://localhost:8000
+```
+
+Test the API:
+
+```bash
+curl -X POST "http://localhost:8000/predict" -F "file=@path/to/image.jpg"
+```
+
+Example response:
+
+```json
+{
+  "prediction": "cat",
+  "confidence": 0.87
+}
+```
+
+### Run Frontend
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+Frontend URL:
+
+```text
+http://localhost:5173
+```
+
+## Inference Configuration
+
+Edit `backend/model_utils.py` to change web app inference settings:
+
 ```python
-from src.predict import predict_single_image, predict_directory
+IMAGE_SIZE = (128, 128)
 
-# Single image prediction
-result = predict_single_image("path/to/image.jpg", return_probabilities=True)
-print(f"Prediction: {result['class_name']}")
-print(f"Confidence: {result['confidence']}")
-
-# Batch prediction
-results = predict_directory("path/to/images/", save_predictions=True)
+HOG_CONFIG = {
+    "orientations": 9,
+    "pixels_per_cell": (4, 4),
+    "cells_per_block": (2, 2),
+    "block_norm": "L2-Hys",
+    "transform_sqrt": True,
+}
 ```
 
-### Evaluation
-
-Evaluate a trained model:
-```python
-from src.evaluate import evaluate_saved_model
-
-results = evaluate_saved_model()
-```
+These values must match the settings used during model training.
 
 ## Notebooks
 
-- **01_data_exploration.ipynb**: Explore dataset structure, visualize samples, analyze class distribution
-- **02_hog_visualization.ipynb**: HOG feature extraction and visualization
-- **03_model_experiments.ipynb**: Model comparison, hyperparameter tuning, performance analysis
+- `01_data_exploration.ipynb`: dataset structure, sample images, and class distribution
+- `02_hog_visualization.ipynb`: original image, grayscale image, HOG visualization, and feature preview
+- `03_model_experiments.ipynb`: simple SVM experiment comparison and validation metrics
 
-## Configuration
+## Important Notes
 
-Modify `src/config.py` to adjust:
-- HOG parameters (orientations, pixels per cell, cells per block)
-- SVM parameters (C, kernel, gamma)
-- Image size and preprocessing settings
-- File paths
-
-## Models
-
-The project supports multiple classifiers:
-- Support Vector Machine (SVM)
-- Random Forest
-- K-Nearest Neighbors (KNN)
-- Logistic Regression
-- Naive Bayes
-
-## Feature Types
-
-- **HOG**: Histogram of Oriented Gradients for shape/edge information
-- **Color Histogram**: RGB color distribution
-- **LBP**: Local Binary Patterns for texture information
-- **Combined**: Concatenation of all feature types
-
-## Output Files
-
-- **models/**: Trained models and label encoders
-- **outputs/figures/**: Plots and visualizations
-- **outputs/metrics/**: Evaluation metrics and reports
-- **outputs/predictions/**: Prediction results
-
-## Performance Metrics
-
-- Accuracy, Precision, Recall, F1-Score
-- Confusion Matrix
-- ROC Curves (for binary classification)
-- Cross-validation scores
-- Learning curves
+- Do not commit trained `.pkl` model files to GitHub because they are large.
+- Do not retrain the model from the web app. The backend only loads existing model artifacts.
+- Keep `src/config.py` and `backend/model_utils.py` aligned when changing image size or HOG parameters.
 
 ## Dependencies
 
-- numpy, pandas: Data manipulation
-- scikit-learn: Machine learning algorithms
-- opencv-python: Image processing
-- scikit-image: Feature extraction
-- matplotlib, seaborn: Visualization
-- imbalanced-learn: Data balancing
-
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests if applicable
-5. Submit a pull request
-
-## License
-
-This project is licensed under the MIT License.
+- Python: NumPy, pandas, OpenCV, scikit-image, scikit-learn, matplotlib, seaborn
+- Backend: FastAPI, Uvicorn, python-multipart
+- Frontend: React, Vite, Tailwind CSS
 
 ## Acknowledgments
 
-- Built with scikit-learn and OpenCV
-- HOG features implementation inspired by skimage
-- Project structure follows best practices for ML projects
+- Built with scikit-learn, scikit-image, OpenCV, FastAPI, React, and Tailwind CSS
