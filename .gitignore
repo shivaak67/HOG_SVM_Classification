@@ -135,11 +135,14 @@ ehthumbs.db
 Thumbs.db
 
 # Project specific
+node_modules/
+frontend/dist/
 data/processed/*
 !data/processed/.gitkeep
 models/*.pkl
 !models/.gitkeep
 models/ensemble/*.pkl
+backend/models/*.pkl
 outputs/*
 !outputs/.gitkeep
 
