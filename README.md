@@ -67,19 +67,12 @@ The project includes a full-stack cat vs dog prediction website.
 The website lets a user drag and drop or upload an image, preview it, click Predict, and see the predicted class with a confidence score when the model supports probabilities.
 
 ## Project Screenshots
+<img width="1602" height="869" alt="Screenshot 2026-05-16 171107" src="https://github.com/user-attachments/assets/6944c69e-62f6-4359-9f8f-10b44bc49b66" />
+<img width="1639" height="879" alt="Screenshot 2026-05-16 171135" src="https://github.com/user-attachments/assets/8a89c7e7-7595-4528-9f45-0015b9c696d4" />
+<img width="1636" height="852" alt="Screenshot 2026-05-16 171208" src="https://github.com/user-attachments/assets/cf1a3f37-a77d-43e1-b9d0-f433b129a195" />
 
-Add screenshots or demo images of the project here.
 
-| Upload Interface | Prediction Result |
-| --- | --- |
-| ![Upload Interface](outputs/figures/upload-interface.png) | ![Prediction Result](outputs/figures/prediction-result.png) |
 
-Suggested images to include:
-
-- Web app upload screen
-- Uploaded image preview
-- Prediction result with confidence score
-- Confusion matrix or HOG visualization
 
 ## Installation
 
